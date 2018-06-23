@@ -16,44 +16,23 @@ chai.use(chaiHttp);
 
 describe('Shopping List', function() {
 
-  // Before our tests run, we activate the server. Our `runServer`
-  // function returns a promise, and we return the that promise by
-  // doing `return runServer`. If we didn't return a promise here,
-  // there's a possibility of a race condition where our tests start
-  // running before our server has started.
   before(function() {
     return runServer();
   });
 
-  // although we only have one test module at the moment, we'll
-  // close our server at the end of these tests. Otherwise,
-  // if we add another test module that also has a `before` block
-  // that starts our server, it will cause an error because the
-  // server would still be running from the previous tests.
   after(function() {
     return closeServer();
   });
 
-  // test strategy:
-  //   1. make request to `/shopping-list`
-  //   2. inspect response object and prove has right code and have
-  //   right keys in response object.
   it('should list items on GET', function() {
-    // for Mocha tests, when we're dealing with asynchronous operations,
-    // we must either return a Promise object or else call a `done` callback
-    // at the end of the test. The `chai.request(server).get...` call is asynchronous
-    // and returns a Promise, so we just return it.
+    
     return chai.request(app)
       .get('/shopping-list')
       .then(function(res) {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
         expect(res.body).to.be.a('array');
-
-        // because we create three items on app load
         expect(res.body.length).to.be.at.least(1);
-        // each item should be an object with key/value pairs
-        // for `id`, `name` and `checked`.
         const expectedKeys = ['id', 'name', 'checked'];
         res.body.forEach(function(item) {
           expect(item).to.be.a('object');
@@ -122,7 +101,7 @@ describe('Shopping List', function() {
         expect(res.body).to.be.a('object');
         expect(res.body).to.deep.equal(updateData);
       });
-  });
+    });
 
   // test strategy:
   //  1. GET shopping list items so we can get ID of one
@@ -142,3 +121,74 @@ describe('Shopping List', function() {
       });
   });
 });
+describe('Recipes', function(){
+    
+    before(function(){
+      return runServer();
+    });
+
+    after(function(){
+      return closeServer();
+    });
+
+    it('Should list items on GET', function() {
+      return chai.request(app)
+      .get('/recipes')
+      .then(function(res){
+        expect(res).to.have.status(200);
+        expect(res).to.have.json;
+        expect(res.body).to.be.a('array');
+        expect(res.body.length).to.be.at.least(1);
+        const expectedKeys = ['id','name','ingredients'];
+        res.body.forEach(function(item) {
+          expect(item).to.be.a('object');
+          expect(item).to.include.keys(expectedKeys);
+        });
+      });
+    });
+
+    it('should add an item on POST', function() {
+      const newRecipe = {name:'macaroni salad', ingredients: ['macaroni', 'mayo', 'awesomeness']};
+      return chai.request(app)
+        .post('/recipes')
+        .send(newRecipe)
+        .then(function(res) {
+          expect(res).to.have.status(201);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.keys('id','name','ingredients');
+          expect(res.body.id).to.not.equal(null);
+          expect(res.body).to.deep.equal(Object.assign(newRecipe, {id: res.body.id}));
+        });
+    });
+
+    it('should update an item on PUT', function(){
+      const updatedData = {name:'roasted corn chow' , ingredients: ['fresh corn', 'roma tomatoe', 'roasted onion', 'chicken stock']};
+      return chai.request(app)
+      .get('/recipes')
+      .then(function(res){
+        updatedData.id = res.body[0].id;
+        return chai.request(app)
+          .put(`/recipes/${updatedData.id}`)
+          .send(updatedData);
+
+      })
+      .then(function(res) {
+        expect(res).to.have.status(204);
+      });
+    });
+
+    it('should delete an item on DELETE', function() {
+      return chai.request(app)
+        .get('/recipes')
+        .then(function(res){
+          return chai.request(app)
+            .delete(`/recipes/${res.body[0].id}`);
+        })
+        .then(function(res){
+          expect(res).to.have.status(204);
+        });
+    });
+
+
+ });
