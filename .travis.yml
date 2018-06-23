@@ -1,2 +1,9 @@
 language: node_js
 node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: i3iX4i3iFuEPDZBF5TlGZM3TWelnOMvlN0uVwqAbLKcVR+cYCLDAzYNHjZuT9zxUkxQGGinwNeqoLEvtOHgxzt2n3jS1ujt6SyF9QMI3W5/9u0o4CCrYQtvJ2DjVrDy36fNrhL/jxby5vP4vvCmhSGLdDNOCSTSS5iSx9u4EkDhEkkNn2ELtiTLY/PLSN+ANGQ/HY7Sg4QEGw7t0Wm5cNgdDLub40c7wsG/pygP2I52u4yUAJPQtNL1cIzlr8hiEv2f0yTVTZ/r5Cml+U6zbYwBjKHNb6HxI4BVwgnRNERiCv1oZNGzetdTkACR893U8LYCgvLTv6mLCFmlUFql/rTWvJo2Tzz3sruakc545n1mcHr7u6ZhCeGV8rT980avC2dBN4XGCrDaW7bc/2JGESXt4tv/tnkgARVsXEDXL/iJ8Ts1bM4c2MFY/hQBafzGc9dO4QHc39uCTvyl3wcuc+tCFp8W9nCUO23MJLEldxrf2wFpBk6ntbX1W/VkZ6D+VSXRExoOY2Qe4y8ZDgvdiEBbhiTHqLAhbk4MihW782Wb7bsrIRhXJrufujJU5jmSRUbrNTEZvYMhixCOs+bYkN+rjbXeTKVCOt66nskvRQGI8vCvq3cyB9H6t1pSWVEdQzX6FbnIdVw5YH1X/ab7WA+z/W7NDZHoeeQrLTdNsGIk=
+  app: shopping-list-test
+  on:
+    repo: Blubagoo/shopping-list-test
